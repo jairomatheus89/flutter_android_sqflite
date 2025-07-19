@@ -12,12 +12,12 @@ class Formzin extends StatefulWidget {
 }
 
 class _FormzinState extends State<Formzin> {
-  GlobalKey<DbListColumnState> _key = GlobalKey<DbListColumnState>();
+  final GlobalKey<DbListColumnState> _key = GlobalKey<DbListColumnState>();
 
   Widget successCreateAccountWidget = Text('');
 
   String nameInput = '';
-  var _nameInputController = TextEditingController();
+  final _nameInputController = TextEditingController();
 
   void clearInputs(){
     setState(() {
@@ -97,7 +97,16 @@ class _FormzinState extends State<Formzin> {
                   maxLength: 30,
                   controller: _nameInputController,
                   cursorColor: Colors.white,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 4.0,
+                        offset: Offset(1.2, 1.2)
+                      )
+                    ]
+                  ),
                   decoration: InputDecoration(
                     counterText: '',
                     filled: true,
@@ -117,7 +126,7 @@ class _FormzinState extends State<Formzin> {
                       )
                     ),
                     hintText: "Digite seu nome aqui...",
-                    hintStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14),
+                    hintStyle: TextStyle(color: Colors.red, fontSize: 16),
                     labelText: "Nome",
                     labelStyle: TextStyle(color: Colors.white, fontSize: 18),
                     floatingLabelStyle: TextStyle(
@@ -220,14 +229,24 @@ class _FormzinState extends State<Formzin> {
                   ),
                   onPressed: () async{
                     clearInputs();
-                    final dbCall = await DataBaseService();
+                    final dbCall = DataBaseService();
                     dbCall.deleteAllUsers();
                     _key.currentState?.reloadNames();
                     setState(() {
                         successCreateAccountWidget = Text('Tabela Deletada Com Sucesso!', style: TextStyle(color: Colors.orange, fontSize: 18,fontWeight: FontWeight.bold));
                       });
                   },
-                  child: Text("DELETE ALL DATA", style: TextStyle(color: Colors.red,fontSize: 20, fontWeight: FontWeight.bold),)
+                  child: Text(
+                    "DELETE ALL DATA",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(blurRadius: 1, color: Colors.white, offset: Offset(1,1), )
+                      ]
+                    )
+                  )
                 ),
               ),
               DbListColumn(key: _key)

@@ -153,8 +153,8 @@ class DbListColumnState extends State<DbListColumn> {
         child: Scrollbar(
           child: ListView(
             controller: _scrollController,
-            children: namesWidgets,
             scrollDirection: Axis.vertical,
+            children: namesWidgets,
           ),
         ),
       ),

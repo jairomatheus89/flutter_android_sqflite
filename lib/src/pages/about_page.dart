@@ -8,13 +8,11 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final Uri _gitHubUrl = Uri.parse('https://github.com/jairomatheus89');
-    final Uri _linkedinUrl = Uri.parse('https://www.linkedin.com/in/jairomatheus89');
+    final Uri gitHubUrl = Uri.parse('https://github.com/jairomatheus89');
+    final Uri linkedinUrl = Uri.parse('https://www.linkedin.com/in/jairomatheus89');
 
     String titleAboutmsg = "Projeto Mobile Flutter w/SQfLite";
     String bodyAboutmsg = "Meu nome é Jairo Paulino, Estou a procura de estágio na area de programação/desenvolvimento de software. Agora no segundo semestre de 2025 vou para meu 2° periodo(começei em janeiro), porém ja acompanho conteúdos relacionados a programação e tecnologia desde o inicio da quarentena do Covid-19. Tenho um conhecimento basico de Web, protocolo HTTP, API's REST, leve noção de WebSockets. Ja fiz projetos academicos com Python, e ja pratiquei uns projetos com NestJS, Angular e PostgreSQL rodando em live em VPS com Node(backend) e Nginx(frontend). Enfim, segue abaixo meus links:\n";
-
-
 
     return Scaffold(
       appBar: AppBarWidget(),
@@ -28,7 +26,14 @@ class AboutPage extends StatelessWidget {
                 blurRadius: 6
               )
             ],
-            color: Colors.green,
+            gradient: LinearGradient(
+              colors: [
+                Colors.red,
+                Colors.green,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter
+            ),
             borderRadius: BorderRadius.circular(10)
           ),
           width: 300,
@@ -81,8 +86,8 @@ class AboutPage extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          if(!await launchUrl(_gitHubUrl)){
-                            throw Exception('Cannot launch $_gitHubUrl');
+                          if(!await launchUrl(gitHubUrl)){
+                            throw Exception('Cannot launch $gitHubUrl');
                           }
                         },
                         child: Text(
@@ -102,8 +107,8 @@ class AboutPage extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          if(!await launchUrl(_linkedinUrl)){
-                            throw Exception('cannot launch $_linkedinUrl');
+                          if(!await launchUrl(linkedinUrl)){
+                            throw Exception('cannot launch $linkedinUrl');
                           }
                         },
                         child: Text(

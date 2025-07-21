@@ -18,11 +18,21 @@ class Page2Page extends StatelessWidget {
                 blurRadius: 6
               )
             ],
-            color: Colors.green,
+            gradient: LinearGradient(
+              colors: [
+                Colors.red,
+                Colors.green,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter
+            ),
             borderRadius: BorderRadius.circular(10)
           ),
-          width: 250,
-          height: 420,
+          width: 300,
+          height: 460,
+          child: Center(
+            child: Text("ME MAMA"),
+          )
         ),
       )
     );

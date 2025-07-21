@@ -61,6 +61,8 @@ flutter:
 
   assets:
     - assets/images/tasklist_ico.png
+    - assets/images/pngegg.png
+    - assets/images/addingico.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

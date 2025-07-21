@@ -51,28 +51,50 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget{
         ),
         actions: [
           Container(
-            //color: Colors.black,
+            //color: Colors.white,
             width: 160,
+            height: 50,
             margin: EdgeInsets.fromLTRB(0,0,6,0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
+                  margin: EdgeInsets.fromLTRB(0,1,0,0),
                   alignment: Alignment.center,
-                  color: const Color.fromARGB(100, 255, 193, 7),
-                  width: 50,
-                  height: 50,
+                  // decoration: BoxDecoration(
+                  //   color: Colors.amber,
+                  //   shape: BoxShape.circle,
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       color: Colors.black,
+                  //       spreadRadius: 3.0,
+                  //       blurRadius: 4.0,
+                  //       offset: Offset.zero,
+                  //     )
+                  //   ]
+                  // ),
+                  height: 40,
                   child:IconButton(
                     onPressed: (){
                       Navigator.pushReplacementNamed((context),'/');
                     },
-                    icon: Image.asset("assets/images/tasklist_ico.png")
+                    icon: Image.asset("assets/images/addingico.png")
                   )
                 ),
-                Container(
-                  color: const Color.fromARGB(100, 33, 149, 243),
-                  width: 50,
-                  height: 50,
+                SizedBox(
+                  // decoration: BoxDecoration(
+                  //   color: Colors.blue,
+                  //   shape: BoxShape.circle,
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       color: Colors.black,
+                  //       spreadRadius: 3.0,
+                  //       blurRadius: 6.0,
+                  //       offset: Offset.zero
+                  //     )
+                  //   ],
+                  // ),
+                  height: 40,
                   child:IconButton(
                     onPressed: (){
                       Navigator.pushReplacementNamed((context),'/page2');
@@ -80,15 +102,25 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget{
                     icon: Image.asset("assets/images/tasklist_ico.png")
                   )
                 ),
-                Container(
-                  color: const Color.fromARGB(100, 233, 30, 98),
-                  width: 50,
-                  height: 50,
+                SizedBox(
+                  // decoration: BoxDecoration(
+                  //   color: Colors.pink,
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       color: Colors.black,
+                  //       spreadRadius: 3.0,
+                  //       blurRadius: 6.0,
+                  //       offset: Offset.zero
+                  //     )
+                  //   ],
+                  //   shape: BoxShape.circle
+                  // ),
+                  height: 40,
                   child:IconButton(
                     onPressed: (){
                       Navigator.pushReplacementNamed((context),'/aboutpage');
                     },
-                    icon: Image.asset("assets/images/tasklist_ico.png")
+                    icon: Image.asset("assets/images/pngegg.png")
                   )
                 ),
               ],

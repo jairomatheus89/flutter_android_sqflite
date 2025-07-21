@@ -7,7 +7,7 @@ class DataBaseService {
 
   static final _table = 'peoples';
   static final _id_Column = '_id';
-  static final _name_column = 'name';
+  static final _name_column = 'taskname';
 
   static Database? _database;
   Future<Database> get database async => _database ??= await initDataBase();
@@ -50,8 +50,7 @@ class DataBaseService {
       return res;
     } catch (e) {
       print("Erro ao acessar a tabela: $e");
-      // Caso ocorra algum erro (ex. tabela não encontrada), reinicializa a tabela
-      await deleteAllUsers();  // Opcional, se quiser sempre resetar a tabela
+      // Caso ocorra algum erro (ex. tabela não encontrada), reinicializa a tabela  // Opcional, se quiser sempre resetar a tabela
       return showNameRows();   // Chama novamente para garantir que a tabela será criada
     }
   }
@@ -60,7 +59,6 @@ class DataBaseService {
     final db = await database;
     try {
       await db.execute('DROP TABLE IF EXISTS $_table');
-      print("tabela $_table deletada!");
 
       await db.execute('''
           CREATE TABLE IF NOT EXISTS $_table (
@@ -68,7 +66,6 @@ class DataBaseService {
             $_name_column TEXT NOT NULL
           )
       ''');
-      print("tabela $_table recriada!");
     } catch (e){
       print("Erro ao deletar a tabela: $e");
     }

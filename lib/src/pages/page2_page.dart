@@ -31,7 +31,18 @@ class Page2Page extends StatelessWidget {
           width: 300,
           height: 460,
           child: Center(
-            child: Text("ME MAMA"),
+            child: TextButton(
+              onPressed: (){
+
+              },
+              child: Container(
+                color: Colors.black,
+                
+                child: Text(
+                  "MOSTRAR OS CARDS!"
+                )
+              ),
+            ),
           )
         ),
       )

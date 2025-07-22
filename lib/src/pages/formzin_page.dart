@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
+import '../services/database_service.dart';
 
 class Formzin extends StatelessWidget {
   const Formzin({super.key});
@@ -9,8 +10,16 @@ class Formzin extends StatelessWidget {
 
     return Scaffold(
       appBar: const AppBarWidget(),
-      body: ListView(
+      body: Stack(
         children: [
+          Container(
+            alignment: Alignment.center,
+            color: Colors.white,
+            child: Image.asset(
+              'assets/images/agtechtranspa.png',
+              scale: 0.6,
+            ),
+          ),
           Container(
             margin: EdgeInsets.fromLTRB(0,20,0,0),
             alignment: Alignment.center,
@@ -49,25 +58,38 @@ class Formzin extends StatelessWidget {
 class TaskForm extends StatefulWidget {
   const TaskForm({super.key});
 
-
   @override
   State<TaskForm> createState() => _TaskFormState();
 }
 
 class _TaskFormState extends State<TaskForm> {
 
+  Widget alertzin = FormzinPageController.instance.alertMessage;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          DateSelectionState(),
-          TasksColumn(),
-          Butzin()
-        ],
-      ),
+
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      FormzinPageController.instance.resetAlertzin();
+    });
+
+    return ListenableBuilder(
+      listenable: FormzinPageController.instance,
+      builder: (context, child) {
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              DateSelectionState(),
+              TasksColumn(),
+              FormzinPageController.instance.alertMessage,
+              Butzin()
+            ],
+          ),
+        );
+      },
+      
     );
   }
 }
@@ -80,9 +102,8 @@ class DateSelectionState extends StatefulWidget {
 }
 
 class _DateSelectionStateState extends State<DateSelectionState> {
-  DateTime? selectedDate;
 
-  bool datepicked = false;
+  DateTime? selectedDate;
 
   Future<void> _selectDate() async {
     final pickedDate = await showDatePicker(
@@ -92,15 +113,20 @@ class _DateSelectionStateState extends State<DateSelectionState> {
       lastDate: DateTime(2100),
     );
 
-    selectedDate = pickedDate;
-
-    setState(() {
-      datepicked = true;
+    setState((){
+      selectedDate = pickedDate;
     });
+
+    FormzinPageController.instance.messaginha = selectedDate;
+    FormzinPageController.instance.resetAlertzin();
+    FormzinPageController.instance.updateMessage();
+
+
   }
 
   @override
   Widget build(BuildContext context) {
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       selectedDate = null;
     });
@@ -197,46 +223,126 @@ class _TaskColumnState extends State<TasksColumn> {
   }
 }
 
-class Butzin extends StatelessWidget {
+class Butzin extends StatefulWidget {
+
   const Butzin({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () async {
+  State<Butzin> createState() => _ButzinState();
+}
 
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              spreadRadius: 1.0,
-              blurRadius: 6.0,
-              offset: Offset(0, 0)
-            )
-          ]
-        ),
-        width: 130,
-        height: 40,
-        alignment: Alignment.center,
-        child: Text(
-          "Salvar Card",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            shadows: [
-              Shadow(
-                color: Colors.black,
-                blurRadius: 6.0,
-                offset: Offset(1, 1)
-              )
-            ]
-          ),
-        ),
-      )
+class _ButzinState extends State<Butzin> {
+
+  @override
+  Widget build(BuildContext context) {
+
+    return ListenableBuilder(
+      listenable: FormzinPageController.instance,
+      builder: (context, child) {
+        return TextButton(
+          onPressed: () async {
+            DataBaseService dbService = DataBaseService();
+            final cheracu = FormzinPageController.instance.messaginha;
+            String cheracuStringify = "${cheracu?.day}/${cheracu?.month}/${cheracu?.year}";
+
+            if (cheracu != null){
+              try{
+                final piruzin = await dbService.insertCardData(cheracuStringify);
+                print("inserido card: $piruzin com sucesso!");
+                FormzinPageController.instance.savedcard();
+
+              } catch (e){
+                  if(e == 'unique'){
+                    FormzinPageController.instance.jatemsapoha();
+                  }
+              }
+
+            } else {
+              FormzinPageController.instance.temNadaAqui();
+              print("tem nadas");
+            }
+            setState(() {
+              FormzinPageController.instance.messaginha = null;
+            });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  spreadRadius: 1.0,
+                  blurRadius: 6.0,
+                  offset: Offset(0, 0)
+                )
+              ]
+            ),
+            width: 130,
+            height: 40,
+            alignment: Alignment.center,
+            child: Text(
+              "Salvar Card",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 6.0,
+                    offset: Offset(1, 1)
+                  )
+                ]
+              ),
+            ),
+          )
+        );
+      }
     );
+  }
+}
+
+
+class FormzinPageController extends ChangeNotifier {
+
+  static final FormzinPageController instance = FormzinPageController._();
+
+  FormzinPageController._();
+
+
+  bool selectedDateFilled = false;
+
+
+
+  DateTime? messaginha;
+
+  Widget alertMessage = Text('');
+
+  Widget jaTemEssaData = Text('Ja tem essa data porra troca ai namoral', style: TextStyle(color: Colors.red, fontSize: 16),);
+  Widget temNadaAquiPat = Text('Tem nada aqui patrão!...', style: TextStyle(color: Colors.red, fontSize: 16),);
+  Widget cardSaved = Text('CARD SALVO COM SUCESSO!', style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255), fontSize: 16),);
+
+  void resetAlertzin(){
+    alertMessage = Text('');
+    notifyListeners();
+  }
+
+  void temNadaAqui(){
+    alertMessage = temNadaAquiPat;
+    notifyListeners();
+  }
+
+  void jatemsapoha(){
+    alertMessage = jaTemEssaData;
+    notifyListeners();
+  }
+
+  void savedcard(){
+    alertMessage = cardSaved;
+    notifyListeners();
+  }
+
+  void updateMessage(){
+    notifyListeners();
   }
 }

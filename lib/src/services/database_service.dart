@@ -2,45 +2,51 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DataBaseService {
-  static final _database_name = 'my_db';
-  static final _database_version = 1;
+  static final _databaseName = 'my_db';
+  static final _databaseVersion = 1;
 
-  static final _table = 'peoples';
-  static final _id_Column = '_id';
-  static final _name_column = 'taskname';
+  static final _table = 'cardtable';
+  static final _idColumn = '_id';
+  static final _dateColumn = 'datecolumn';
 
   static Database? _database;
   Future<Database> get database async => _database ??= await initDataBase();
 
   initDataBase() async {
-    String path = join(await getDatabasesPath(), _database_name);
+    String path = join(await getDatabasesPath(), _databaseName);
     return await openDatabase(
       path,
-      version: _database_version,
+      version: _databaseVersion,
       onCreate: (db, version) {
+        print("criando sapoha!...");
         db.execute('''
           CREATE TABLE IF NOT EXISTS $_table (
-            $_id_Column INTEGER PRIMARY KEY,
-            $_name_column TEXT NOT NULL
+            $_idColumn INTEGER PRIMARY KEY,
+            $_dateColumn TEXT NOT NULL UNIQUE
           )
         ''');
+        print("Tabela $_table criada com sucesso!");
       },
       onUpgrade: (db, oldVersion, newVersion) {
-        print("Upgrade do banco de dados de $oldVersion para $newVersion");
+        print("Atualizando banco de dados de versão $oldVersion para $newVersion");
       },
     );
   }
 
-  insertNameData(data) async {
+  insertCardData(data) async {
     final db = await database;
 
-    await db.insert(
-      _table,{
-        _name_column: data
-      }
-    );
-
-    print("nome '$data' inserido na lista!");
+    try{
+      await db.insert(
+        _table,{
+          _dateColumn: data
+        },
+        conflictAlgorithm: ConflictAlgorithm.fail,
+      );
+      return 'SALVO COM SUCESSO';
+    } catch (e) {
+      throw 'unique';
+    }
   }
 
   Future<List<Map<String, dynamic>>> showNameRows() async {
@@ -49,25 +55,25 @@ class DataBaseService {
       final res = await db.query(_table);
       return res;
     } catch (e) {
-      print("Erro ao acessar a tabela: $e");
       // Caso ocorra algum erro (ex. tabela não encontrada), reinicializa a tabela  // Opcional, se quiser sempre resetar a tabela
-      return showNameRows();   // Chama novamente para garantir que a tabela será criada
+      throw Exception("Tabelita none encontred: $e");   // Chama novamente para garantir que a tabela será criada
     }
   }
 
-  deleteAllUsers() async {
+  deleteAllCards() async {
     final db = await database;
     try {
       await db.execute('DROP TABLE IF EXISTS $_table');
 
       await db.execute('''
           CREATE TABLE IF NOT EXISTS $_table (
-            $_id_Column INTEGER PRIMARY KEY,
-            $_name_column TEXT NOT NULL
+            $_idColumn INTEGER PRIMARY KEY,
+            $_dateColumn TEXT NOT NULL UNIQUE
           )
       ''');
+      print("BANCO DELETADO!!!");
     } catch (e){
-      print("Erro ao deletar a tabela: $e");
+      throw Exception("Erro ao deletar a tabela: $e");
     }
   }
 

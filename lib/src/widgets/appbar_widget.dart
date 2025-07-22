@@ -78,7 +78,19 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget{
                     onPressed: (){
                       Navigator.pushReplacementNamed((context),'/');
                     },
-                    icon: Image.asset("assets/images/addingico.png")
+                    icon: SizedBox(
+                      child: Icon(
+                        color: Colors.white,
+                        shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(1, 1),
+                          blurRadius: 4.0
+                        )
+                      ],
+                        Icons.add_circle_outline,
+                      ),
+                    )
                   )
                 ),
                 SizedBox(
@@ -99,7 +111,17 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget{
                     onPressed: (){
                       Navigator.pushReplacementNamed((context),'/page2');
                     },
-                    icon: Image.asset("assets/images/tasklist_ico.png")
+                    icon: Icon(
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(1, 1),
+                          blurRadius: 4.0
+                        )
+                      ],
+                      Icons.list_alt_outlined
+                    )
                   )
                 ),
                 SizedBox(
@@ -120,7 +142,17 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget{
                     onPressed: (){
                       Navigator.pushReplacementNamed((context),'/aboutpage');
                     },
-                    icon: Image.asset("assets/images/pngegg.png")
+                    icon: Icon(
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(1, 1),
+                          blurRadius: 4.0
+                        )
+                      ],
+                      Icons.info
+                    )
                   )
                 ),
               ],

@@ -16,123 +16,135 @@ class AboutPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBarWidget(),
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                spreadRadius: 2,
-                blurRadius: 6
-              )
-            ],
-            gradient: LinearGradient(
-              colors: [
-                Colors.red,
-                Colors.green,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter
-            ),
-            borderRadius: BorderRadius.circular(10)
-          ),
-          width: 300,
-          height: 460,
-          child: Padding(
-            padding: EdgeInsetsGeometry.all(14),
-            child: Scrollbar(
-              thumbVisibility: true,
-              trackVisibility: true,
-              thickness: 3.0,
-              child: ListView(
-                children: [
-                  Text(
-                    titleAboutmsg,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black,
-                          offset: Offset(1.6, 1.6),
-                          blurRadius: 6.0
-                        )
-                      ]
-                    ),
-                  ),
-                  Text.rich(
-                    textAlign: TextAlign.center,
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: bodyAboutmsg,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            shadows: [
-                              Shadow(
-                                color:Colors.black,
-                                blurRadius: 6.0,
-                                offset: Offset(1.0, 1.0)
-                              )
-                            ]
-                          )
-                        ),
-                      ]
-                    )
-                  ),
-                  Column(
-                    spacing: 10.0,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          if(!await launchUrl(gitHubUrl)){
-                            throw Exception('Cannot launch $gitHubUrl');
-                          }
-                        },
-                        child: Text(
-                          "https://github.com/jairomatheus89",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black,
-                                blurRadius: 1.0,
-                                offset: Offset(1, 1)
-                              )
-                            ]
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          if(!await launchUrl(linkedinUrl)){
-                            throw Exception('cannot launch $linkedinUrl');
-                          }
-                        },
-                        child: Text(
-                          "www.linkedin.com/in/jairomatheus89",
-                          style: TextStyle(
-                            color: Colors.blueAccent,
-                            fontSize: 14,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black,
-                                blurRadius: 2.0,
-                                offset: Offset(1, 1)
-                              )
-                            ]
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
+      body: Stack(
+        children: [
+          Container(
+            child: Center(
+              child: Image.asset(
+                'assets/images/agtechtranspa.png',
+                scale: 0.6,
               ),
             ),
           ),
-        ),
+          Center(
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(70, 0, 0, 0),
+                    spreadRadius: 2,
+                    blurRadius: 6
+                  )
+                ],
+                gradient: LinearGradient(
+                  colors: [
+                    const Color.fromARGB(140, 244, 67, 54),
+                    const Color.fromARGB(140, 76, 175, 79),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter
+                ),
+                borderRadius: BorderRadius.circular(10)
+              ),
+              width: 300,
+              height: 460,
+              child: Padding(
+                padding: EdgeInsetsGeometry.all(14),
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  trackVisibility: true,
+                  thickness: 3.0,
+                  child: ListView(
+                    children: [
+                      Text(
+                        titleAboutmsg,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black,
+                              offset: Offset(1, 1),
+                              blurRadius: 3.0
+                            )
+                          ]
+                        ),
+                      ),
+                      Text.rich(
+                        textAlign: TextAlign.center,
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: bodyAboutmsg,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                shadows: [
+                                  Shadow(
+                                    color:Colors.black,
+                                    blurRadius: 1.0,
+                                    offset: Offset(1.0, 1.0)
+                                  )
+                                ]
+                              )
+                            ),
+                          ]
+                        )
+                      ),
+                      Column(
+                        spacing: 10.0,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              if(!await launchUrl(gitHubUrl)){
+                                throw Exception('Cannot launch $gitHubUrl');
+                              }
+                            },
+                            child: Text(
+                              "https://github.com/jairomatheus89",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black,
+                                    blurRadius: 1.0,
+                                    offset: Offset(1, 1)
+                                  )
+                                ]
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              if(!await launchUrl(linkedinUrl)){
+                                throw Exception('cannot launch $linkedinUrl');
+                              }
+                            },
+                            child: Text(
+                              "www.linkedin.com/in/jairomatheus89",
+                              style: TextStyle(
+                                color: Colors.blueAccent,
+                                fontSize: 14,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black,
+                                    blurRadius: 1.0,
+                                    offset: Offset(1, 1)
+                                  )
+                                ]
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       )
     );
   }

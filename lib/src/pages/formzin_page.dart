@@ -29,15 +29,15 @@ class Formzin extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: const Color.fromARGB(40, 0, 0, 0),
                     spreadRadius: 2,
                     blurRadius: 6
                   )
                 ],
                 gradient: LinearGradient(
                   colors: [
-                    Colors.red,
-                    Colors.green,
+                    const Color.fromARGB(80, 244, 67, 54),
+                    const Color.fromARGB(80, 76, 175, 79),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter
@@ -120,8 +120,6 @@ class _DateSelectionStateState extends State<DateSelectionState> {
     FormzinPageController.instance.messaginha = selectedDate;
     FormzinPageController.instance.resetAlertzin();
     FormzinPageController.instance.updateMessage();
-
-
   }
 
   @override
@@ -133,18 +131,7 @@ class _DateSelectionStateState extends State<DateSelectionState> {
 
     return Container(
       width: 300,
-      height: 80,
-      decoration: BoxDecoration(
-        color: Colors.green,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            spreadRadius: 1.0,
-            blurRadius: 6.0
-          )
-        ]
-      ),
+      height: 90,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -185,7 +172,11 @@ class _DateSelectionStateState extends State<DateSelectionState> {
           Text(
             selectedDate != null
             ?'Card de: ${selectedDate!.day}/${selectedDate?.month}/${selectedDate?.year}'
-            : 'no data selected',
+            : 'no data selected', style: TextStyle(
+              fontSize: 18,
+              color: selectedDate != null? Colors.green : Colors.red,
+              shadows: [Shadow(color: Colors.black, offset: Offset(1, 1), blurRadius: 1.0)]
+            ),
           ),
         ],
       ),
@@ -309,18 +300,15 @@ class FormzinPageController extends ChangeNotifier {
 
   FormzinPageController._();
 
-
   bool selectedDateFilled = false;
-
-
 
   DateTime? messaginha;
 
   Widget alertMessage = Text('');
 
-  Widget jaTemEssaData = Text('Ja tem essa data porra troca ai namoral', style: TextStyle(color: Colors.red, fontSize: 16),);
-  Widget temNadaAquiPat = Text('Tem nada aqui patrão!...', style: TextStyle(color: Colors.red, fontSize: 16),);
-  Widget cardSaved = Text('CARD SALVO COM SUCESSO!', style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255), fontSize: 16),);
+  Widget jaTemEssaData = Text('Ja existe um card com esta data!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
+  Widget temNadaAquiPat = Text('Selecione ao menos uma data!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
+  Widget cardSaved = Text('CARD SALVO COM SUCESSO!', style: TextStyle(color: Colors.green, fontSize: 20, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
 
   void resetAlertzin(){
     alertMessage = Text('');

@@ -1,3 +1,4 @@
+import '../widgets/background_widget.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
 import '../services/database_service.dart';
@@ -18,15 +19,7 @@ class _Page2PageState extends State<Page2Page> {
       appBar: AppBarWidget(),
       body: Stack(
         children: [
-          Container(
-            child: Center(
-              child: Image.asset(
-                'assets/images/agtechtranspa.png',
-                fit: BoxFit.contain,
-                scale: 0.6,
-              ),
-            ),
-          ),
+          BackgroundWidget(),
           Center(
             child: Container(
               decoration: BoxDecoration(
@@ -50,7 +43,10 @@ class _Page2PageState extends State<Page2Page> {
               width: 300,
               height: 460,
               child: Center(
-                child: CardsListContainer(),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CardsListContainer(),
+                ),
               )
             ),
           ),
@@ -80,65 +76,35 @@ class _CardsListContainerState extends State<CardsListContainer> {
   final sexolandia = DataBaseService();
   List<Widget> cardList = [];
 
-  var sleepzin = const Duration(seconds: 3);
-
+  @override
   void initState(){
     super.initState();
     isLoading = true;
   }
 
-  void listCard() async {
+    // await Future.delayed(Duration(seconds: 2));
 
-    final priquita = await sexolandia.showNameRows();
-    var priquitsleng = priquita.length;
-
-    List bucetilda = [];
-    for (var i = 0; i < priquitsleng; i++){
-      bucetilda.add(priquita[i]['datecolumn'].toString());
-      
-      cardList.add(Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
-        height: 32,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(200, 255, 255, 255),
-          borderRadius: BorderRadius.circular(20)
-        ),
-        child: Text(
-          bucetilda[i],
-          style: TextStyle(
-            color:Colors.green,
-            fontSize: 16,
-            shadows: [
-              Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))
-            ]
-          ),
-        ),
-      ));
-    }
-
-    await Future.delayed(Duration(seconds: 1));
-
-    setState((){
-      isLoading = false;
-    });
-  } 
 
   @override
   Widget build(BuildContext context) {
 
-    if (isLoading){
-      listCard();
-    }
-
     return Container(
       child: !isLoading 
-      ?Padding(
-        padding: const EdgeInsets.all(10.0),
+      ?SizedBox(
+        width: 222,
         child: ListView(
+          scrollDirection: Axis.vertical,
           children: cardList,
         ),
-      ) : CircularProgressIndicator(),
+      ) : SizedBox(
+        width: 100,
+        height: 100,
+        child: CircularProgressIndicator(
+          color: Colors.green,
+          backgroundColor: Colors.red,
+          strokeWidth: 10.0,
+        )
+      ),
     );
   }
 }

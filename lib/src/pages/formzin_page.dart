@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
 import '../services/database_service.dart';
+import '../widgets/background_widget.dart';
+import '../models/card_day.model.dart';
 
 class Formzin extends StatelessWidget {
   const Formzin({super.key});
@@ -12,14 +14,7 @@ class Formzin extends StatelessWidget {
       appBar: const AppBarWidget(),
       body: Stack(
         children: [
-          Container(
-            alignment: Alignment.center,
-            color: Colors.white,
-            child: Image.asset(
-              'assets/images/agtechtranspa.png',
-              scale: 0.6,
-            ),
-          ),
+          BackgroundWidget(),
           Container(
             margin: EdgeInsets.fromLTRB(0,20,0,0),
             alignment: Alignment.center,
@@ -129,7 +124,7 @@ class _DateSelectionStateState extends State<DateSelectionState> {
       selectedDate = null;
     });
 
-    return Container(
+    return SizedBox(
       width: 300,
       height: 90,
       child: Column(
@@ -230,77 +225,178 @@ class _ButzinState extends State<Butzin> {
     return ListenableBuilder(
       listenable: FormzinPageController.instance,
       builder: (context, child) {
-        return TextButton(
-          onPressed: () async {
-            DataBaseService dbService = DataBaseService();
-            final cheracu = FormzinPageController.instance.messaginha;
-            String cheracuStringify = "${cheracu?.day}/${cheracu?.month}/${cheracu?.year}";
-
-            if (cheracu != null){
-              try{
-                final piruzin = await dbService.insertCardData(cheracuStringify);
-                print("inserido card: $piruzin com sucesso!");
-                FormzinPageController.instance.savedcard();
-
-              } catch (e){
-                  if(e == 'unique'){
-                    FormzinPageController.instance.jatemsapoha();
-                  }
-              }
-
-            } else {
-              FormzinPageController.instance.temNadaAqui();
-              print("tem nadas");
-            }
-            setState(() {
-              FormzinPageController.instance.messaginha = null;
-            });
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  spreadRadius: 1.0,
-                  blurRadius: 6.0,
-                  offset: Offset(0, 0)
-                )
-              ]
+        return Column(
+          children: [
+            TextButton(
+              onPressed: () async {
+                final db = DataBaseService();
+            
+                db.showCards();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(200, 244, 67, 54),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(100, 0, 0, 0),
+                      spreadRadius: 1.0,
+                      blurRadius: 6.0,
+                      offset: Offset(0, 0)
+                    )
+                  ]
+                ),
+                width: 130,
+                height: 40,
+                alignment: Alignment.center,
+                child: Text(
+                  "Mostra tudo",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 6.0,
+                        offset: Offset(1, 1)
+                      )
+                    ]
+                  ),
+                ),
+              )
             ),
-            width: 130,
-            height: 40,
-            alignment: Alignment.center,
-            child: Text(
-              "Salvar Card",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                shadows: [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 6.0,
-                    offset: Offset(1, 1)
-                  )
-                ]
-              ),
+            TextButton(
+              onPressed: () async {
+                final db = DataBaseService();
+                
+                final datevalue = FormzinPageController.instance.messaginha;
+                String datenameString = "${datevalue?.day}/${datevalue?.month}/${datevalue?.year}";
+                
+                if(datevalue == null){
+
+                  print("NAO TEM NADA AQUI!");
+                  return;
+                } 
+                try{
+                  Map cardmodel = CardDayModel(date: datenameString).toMap();
+                
+                  await db.insertCard(cardmodel);
+
+                  print("card do dia: $datenameString, salvo com sucesso!");
+
+                  FormzinPageController.instance.messaginha = null;
+                  FormzinPageController.instance.updateMessage();
+                } catch (e){
+                  print("Ja existe um card pra este dia!");
+                  FormzinPageController.instance.messaginha = null;
+                  FormzinPageController.instance.updateMessage();
+                }
+                
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(200, 244, 67, 54),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(100, 0, 0, 0),
+                      spreadRadius: 1.0,
+                      blurRadius: 6.0,
+                      offset: Offset(0, 0)
+                    )
+                  ]
+                ),
+                width: 130,
+                height: 40,
+                alignment: Alignment.center,
+                child: Text(
+                  "Salvar Card",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 6.0,
+                        offset: Offset(1, 1)
+                      )
+                    ]
+                  ),
+                ),
+              )
             ),
-          )
+            TextButton(
+              onPressed: () async {
+                final db = DataBaseService();
+                
+                final datevalue = FormzinPageController.instance.messaginha;
+                String datenameString = "${datevalue?.day}/${datevalue?.month}/${datevalue?.year}";
+                
+                if(datevalue == null){
+
+                  print("NAO TEM NADA AQUI!");
+                  return;
+                } 
+                try{
+                  Map cardmodel = CardDayModel(date: datenameString).toMap();
+                
+                  await db.insertCard(cardmodel);
+
+                  print("card do dia: $datenameString, salvo com sucesso!");
+
+                  FormzinPageController.instance.messaginha = null;
+                  FormzinPageController.instance.updateMessage();
+                } catch (e){
+                  print("Ja existe um card pra este dia!");
+                  FormzinPageController.instance.messaginha = null;
+                  FormzinPageController.instance.updateMessage();
+                }
+                
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(200, 244, 67, 54),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(100, 0, 0, 0),
+                      spreadRadius: 1.0,
+                      blurRadius: 6.0,
+                      offset: Offset(0, 0)
+                    )
+                  ]
+                ),
+                width: 130,
+                padding: EdgeInsetsGeometry.all(8),
+                alignment: Alignment.center,
+                child: Text(
+                  "Delete all Table",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 6.0,
+                        offset: Offset(1, 1)
+                      )
+                    ]
+                  ),
+                ),
+              )
+            ),
+          ],
         );
       }
     );
   }
 }
 
-
 class FormzinPageController extends ChangeNotifier {
 
   static final FormzinPageController instance = FormzinPageController._();
 
   FormzinPageController._();
-
-  bool selectedDateFilled = false;
 
   DateTime? messaginha;
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/background_widget.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -18,14 +19,7 @@ class AboutPage extends StatelessWidget {
       appBar: AppBarWidget(),
       body: Stack(
         children: [
-          Container(
-            child: Center(
-              child: Image.asset(
-                'assets/images/agtechtranspa.png',
-                scale: 0.6,
-              ),
-            ),
-          ),
+          BackgroundWidget(),
           Center(
             child: Container(
               decoration: BoxDecoration(

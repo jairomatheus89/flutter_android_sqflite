@@ -27,7 +27,7 @@ class DbListColumnState extends State<DbListColumn> {
 
   Future<void> loadingNames() async {
     final db = DataBaseService();
-    final tablelist = await db.showNameRows();
+    final tablelist = await db.showCards();
 
     List list = tablelist;
     final listlentgh = list.length;

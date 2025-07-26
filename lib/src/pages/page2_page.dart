@@ -73,6 +73,21 @@ class _CardsListContainerState extends State<CardsListContainer> {
 
   late bool isLoading = true;
 
+  final TextStyle textStyle = TextStyle(
+    fontSize: 100,
+    fontWeight: FontWeight.normal,
+  );
+
+  
+  LinearGradient mygradson = LinearGradient(
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+    colors: [
+      const Color.fromARGB(255, 0, 163, 22),
+      Colors.white
+    ]
+  );
+
   final sexolandia = DataBaseService();
   List<Widget> cardList = [];
 
@@ -92,9 +107,19 @@ class _CardsListContainerState extends State<CardsListContainer> {
       child: !isLoading 
       ?SizedBox(
         width: 222,
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: cardList,
+        child: Center(
+          child: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (bounds) {
+              return mygradson.createShader(
+                Rect.fromLTWH(0, 0, bounds.width, bounds.height)
+              );
+            },
+            child: Text(
+              "data",
+              style: textStyle
+            )
+          ),
         ),
       ) : SizedBox(
         width: 100,

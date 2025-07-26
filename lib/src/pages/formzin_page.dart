@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import '../widgets/appbar_widget.dart';
 import '../services/database_service.dart';
 import '../widgets/background_widget.dart';
 import '../models/card_day.model.dart';
+import '../models/task_card_model.dart';
 
 class Formzin extends StatelessWidget {
   const Formzin({super.key});
@@ -58,8 +60,6 @@ class TaskForm extends StatefulWidget {
 }
 
 class _TaskFormState extends State<TaskForm> {
-
-  Widget alertzin = FormzinPageController.instance.alertMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -225,167 +225,196 @@ class _ButzinState extends State<Butzin> {
     return ListenableBuilder(
       listenable: FormzinPageController.instance,
       builder: (context, child) {
-        return Column(
-          children: [
-            TextButton(
-              onPressed: () async {
-                final db = DataBaseService();
-            
-                db.showCards();
-              },
-              child: Container(
+        return SizedBox(
+          //color: Colors.amber,
+          height: 120,
+          width: 130,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            spacing: 0,
+            children: [
+              Container(
+                alignment: Alignment.center,
+                width: 100,
+                height: 20,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(200, 244, 67, 54),
-                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(100, 0, 0, 0),
+                      color: Colors.black,
+                      blurRadius: 3.0,
                       spreadRadius: 1.0,
-                      blurRadius: 6.0,
-                      offset: Offset(0, 0)
+                      offset: Offset(0,0)
                     )
                   ]
                 ),
-                width: 130,
-                height: 40,
-                alignment: Alignment.center,
-                child: Text(
-                  "Mostra tudo",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 6.0,
-                        offset: Offset(1, 1)
-                      )
-                    ]
+                child: GestureDetector(
+                  onTap:(){
+                    final db = DataBaseService();
+                    db.showCards();
+                    FormzinPageController.instance.messaginha = null;
+                    FormzinPageController.instance.resetAlertzin();
+                    FormzinPageController.instance.updateMessage();
+                  },
+                  child: Text(
+                    "SHOW TABLE",
+                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
                   ),
                 ),
-              )
-            ),
-            TextButton(
-              onPressed: () async {
-                final db = DataBaseService();
-                
-                final datevalue = FormzinPageController.instance.messaginha;
-                String datenameString = "${datevalue?.day}/${datevalue?.month}/${datevalue?.year}";
-                
-                if(datevalue == null){
-
-                  print("NAO TEM NADA AQUI!");
-                  return;
-                } 
-                try{
-                  Map cardmodel = CardDayModel(date: datenameString).toMap();
-                
-                  await db.insertCard(cardmodel);
-
-                  print("card do dia: $datenameString, salvo com sucesso!");
-
-                  FormzinPageController.instance.messaginha = null;
-                  FormzinPageController.instance.updateMessage();
-                } catch (e){
-                  print("Ja existe um card pra este dia!");
-                  FormzinPageController.instance.messaginha = null;
-                  FormzinPageController.instance.updateMessage();
-                }
-                
-              },
-              child: Container(
+              ),
+              Container(
+                alignment: Alignment.center,
+                width: 100,
+                height: 20,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(200, 244, 67, 54),
-                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(100, 0, 0, 0),
+                      color: Colors.black,
+                      blurRadius: 3.0,
                       spreadRadius: 1.0,
-                      blurRadius: 6.0,
-                      offset: Offset(0, 0)
+                      offset: Offset(0,0)
                     )
                   ]
                 ),
-                width: 130,
-                height: 40,
-                alignment: Alignment.center,
-                child: Text(
-                  "Salvar Card",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 6.0,
-                        offset: Offset(1, 1)
-                      )
-                    ]
+                child: GestureDetector(
+                  onTap:() async {
+                    final db = DataBaseService();
+                    var msg = FormzinPageController.instance.messaginha;
+                    var msgString = "${msg?.day}/${msg?.month}/${msg?.year}";
+                    
+                    if(msg != null){
+                      var cardmodel = CardDayModel(date: msgString);
+
+                      try{
+
+                        await db.insertCard(cardmodel.toMap());
+                        FormzinPageController.instance.messaginha = null;
+                        FormzinPageController.instance.savedcard();
+                        FormzinPageController.instance.updateMessage();
+
+                        return print("card dia: $msgString salvo com sucesso!");
+                      } catch (e) {
+                        
+                        FormzinPageController.instance.messaginha = null;
+                        FormzinPageController.instance.jatemsapoha();
+                        FormzinPageController.instance.updateMessage();
+
+                        return print("Ja tem essa data neguim...");
+                      }
+                      
+                    }
+
+                    FormzinPageController.instance.messaginha = null;
+                    FormzinPageController.instance.temNadaAqui();
+                    FormzinPageController.instance.updateMessage();
+                  },
+                  child: Text(
+                    "SAVE CARD",
+                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
                   ),
                 ),
-              )
-            ),
-            TextButton(
-              onPressed: () async {
-                final db = DataBaseService();
-                
-                final datevalue = FormzinPageController.instance.messaginha;
-                String datenameString = "${datevalue?.day}/${datevalue?.month}/${datevalue?.year}";
-                
-                if(datevalue == null){
-
-                  print("NAO TEM NADA AQUI!");
-                  return;
-                } 
-                try{
-                  Map cardmodel = CardDayModel(date: datenameString).toMap();
-                
-                  await db.insertCard(cardmodel);
-
-                  print("card do dia: $datenameString, salvo com sucesso!");
-
-                  FormzinPageController.instance.messaginha = null;
-                  FormzinPageController.instance.updateMessage();
-                } catch (e){
-                  print("Ja existe um card pra este dia!");
-                  FormzinPageController.instance.messaginha = null;
-                  FormzinPageController.instance.updateMessage();
-                }
-                
-              },
-              child: Container(
+              ),
+              Container(
+                alignment: Alignment.center,
+                width: 100,
+                height: 20,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(200, 244, 67, 54),
-                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(100, 0, 0, 0),
+                      color: Colors.black,
+                      blurRadius: 3.0,
                       spreadRadius: 1.0,
-                      blurRadius: 6.0,
-                      offset: Offset(0, 0)
+                      offset: Offset(0,0)
                     )
                   ]
                 ),
-                width: 130,
-                padding: EdgeInsetsGeometry.all(8),
-                alignment: Alignment.center,
-                child: Text(
-                  "Delete all Table",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 6.0,
-                        offset: Offset(1, 1)
-                      )
-                    ]
+                child: GestureDetector(
+                  onTap:() async {
+                    final db = DataBaseService();
+                    try{
+
+                      await db.droptable();
+                      return FormzinPageController.instance.tableDeletedson();
+                    } catch (e){
+                      print("Nem tem tabela tiu!");
+                      return FormzinPageController.instance.temNemTable();
+                    }
+                    
+                  },
+                  child: Text(
+                    "DELETE TABLE",
+                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
                   ),
                 ),
-              )
-            ),
-          ],
+              ),
+              Container(
+                alignment: Alignment.center,
+                width: 100,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 3.0,
+                      spreadRadius: 1.0,
+                      offset: Offset(0,0)
+                    )
+                  ]
+                ),
+                child: GestureDetector(
+                  onTap:() async {
+                    var db = DataBaseService();
+
+
+                    // final taskModel = TaskCardModel(cardId: cardId, description: "taskzinhabower");
+
+                    // await db.insertTask(taskModel);
+                  },
+                  child: Text(
+                    "create tasks",
+                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                width: 100,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 3.0,
+                      spreadRadius: 1.0,
+                      offset: Offset(0,0)
+                    )
+                  ]
+                ),
+                child: GestureDetector(
+                  onTap:() async {
+                    String dateCard = '30/7/2025';
+                    var db = DataBaseService();
+                    final cardExists = await db.checkCardExist(dateCard);
+
+
+                  },
+                  child: Text(
+                    "show tasks",
+                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       }
     );
@@ -403,11 +432,23 @@ class FormzinPageController extends ChangeNotifier {
   Widget alertMessage = Text('');
 
   Widget jaTemEssaData = Text('Ja existe um card com esta data!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
-  Widget temNadaAquiPat = Text('Selecione ao menos uma data!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
+  Widget temNadaAquiPat = Text('Selecione uma data e ao menos uma task', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget cardSaved = Text('CARD SALVO COM SUCESSO!', style: TextStyle(color: Colors.green, fontSize: 20, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
+  Widget tableDeleted = Text('Tabela Deletada!', style: TextStyle(backgroundColor: Colors.black, color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.white, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
+  Widget temNemTableAi = Text('Tem nem Tabela aqui tiu!...', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
 
   void resetAlertzin(){
     alertMessage = Text('');
+    notifyListeners();
+  }
+
+  void temNemTable(){
+    alertMessage = temNemTableAi;
+    notifyListeners();
+  }
+
+  void tableDeletedson(){
+    alertMessage = tableDeleted;
     notifyListeners();
   }
 

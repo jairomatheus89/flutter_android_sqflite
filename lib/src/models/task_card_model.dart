@@ -22,10 +22,8 @@ class TaskCardModel {
 
   Map<String, dynamic> toMap(){
     return {
-      '_id': id,
       'card_id': cardId,
       'description': description,
-      'is_done': isDone
     };
   }
 }

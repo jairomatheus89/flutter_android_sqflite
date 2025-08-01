@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../models/card_day.model.dart';
 
 class DataBaseService {
   static final _databaseName = 'my_db';
@@ -35,106 +36,104 @@ class DataBaseService {
               card_id INTEGER NOT NULL,
               description TEXT NOT NULL,
               id_done INTEGER NOT NULL DEFAULT 0,
-              FOREIGN KEY (card_id) REFERENCES card_day(_id) ON DELETE CASCADE
+              FOREIGN KEY (card_id) REFERENCES $_table($_idCardColumn) ON DELETE CASCADE
             )
           ''');
-
-          print("Tabelas de cards e tasks criadas!");
         },
         onUpgrade: (db, oldVersion, newVersion) {
-          print("Atualizando banco de dados de versão $oldVersion para $newVersion");
+
         },
       );
-      print("Banco de dados iniciado e/ou recriado(se necessario)");
 
       return db;
     } catch (e){
-      print(e);
       rethrow;
     }
   }
 
-  insertCard(cardmodel) async {
+  Future<void> insertCard(CardDayModel cardmodel) async {
     var db = await database;
 
     try{
-      await db.insert(_table,
-        cardmodel,
+
+      int cardId = await db.insert(_table,{
+          _dateCardColumn: cardmodel.date
+        },
         conflictAlgorithm: ConflictAlgorithm.abort
       );
-    } catch (e){
-      rethrow;
-    } 
-  }
 
-  insertTask(taskmodel) async {
-    var db = await database;
-
-    try {
-      await db.insert('task_card',
-        taskmodel,
-        conflictAlgorithm: ConflictAlgorithm.abort
-      );
-      print("FOI TITIU!");
-    } catch (e){
+      for(var tasks in cardmodel.tasks){
+        await db.insert('task_card', {
+            'description': tasks.description,
+            'card_id': cardId
+          },
+        );
+      }
+      print("criado paew!");
+    } catch (e) {
       rethrow;
     }
   }
 
   showCards() async {
-
+    
     var db = await database;
-
+    
     try{
       var cardinsert = await db.query(_table);
+      if (cardinsert.isEmpty){
+        throw Exception("errinho aqui");
+      }
       for (var i in cardinsert) {
         print(i);
       }
+      return;
     } catch (e){
-      print(e);
+      throw Exception(e);
     }
   }
 
   showTasks() async {
-
     var db = await database;
 
-    try{
-      var cardinsert = await db.query('task_card');
-      for (var i in cardinsert) {
-        print(i);
+    try {
+      var tasksHandle = await db.query('task_card');
+
+      if(tasksHandle.isEmpty){
+        throw Exception("TA VAZIO SAPOHA DE TASKS LISTS");
       }
+
+      tasksHandle.forEach((i){
+        print(i);
+      });
+      return;
     } catch (e){
-      print(e);
+      throw Exception(e);
     }
   }
 
-  checkCardExist(cardDate) async {
+
+  Future<bool> checkCardExist(String cardDate) async {
     var db = await database;
-    try{
-      var zegotin = await db.query(_table,
-      columns: [_idCardColumn],
+
+    final List<Map<String, dynamic>> result = await db.query(
+      _table,
       where: '$_dateCardColumn = ?',
-      whereArgs: [cardDate]
+      whereArgs: [cardDate],
     );
-    print(zegotin[0]);
-    } catch (e) {
-      print("Ta Foda!: $e");
-    }
-    
+
+    return result.isNotEmpty;
   }
 
-  deleteCardFromId(card_id) async {
+  deleteCardFromId(cardId) async {
     var db = await database;
 
     db.execute('''
-      DELETE FROM $_table WHERE $_idCardColumn = $card_id;
+      DELETE FROM $_table WHERE $_idCardColumn = $cardId;
     ''');
   }
 
   droptable() async {
-    var db = await database;
-
     try{
       await deleteDatabase(join(await getDatabasesPath(), _databaseName));
       return print("Banco Deleted FDP!");

@@ -4,7 +4,7 @@ class TaskCardModel {
   final String description;
   final bool isDone;
 
-  TaskCardModel({
+  TaskCardModel ({
     this.id,
     required this.cardId,
     required this.description,
@@ -16,7 +16,7 @@ class TaskCardModel {
       id: map['_id'],
       cardId: map['card_id'],
       description: map['description'],
-      isDone: map['is_done'] == 1
+      isDone: map['is_done']
     );
   }
 

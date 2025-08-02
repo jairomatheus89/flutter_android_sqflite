@@ -26,7 +26,8 @@ class DataBaseService {
           db.execute('''
             CREATE TABLE IF NOT EXISTS $_table (
               $_idCardColumn INTEGER PRIMARY KEY,
-              $_dateCardColumn TEXT NOT NULL UNIQUE
+              $_dateCardColumn TEXT NOT NULL UNIQUE,
+              scheduledAt INTEGER
             )
           ''');
 
@@ -56,9 +57,8 @@ class DataBaseService {
 
     try{
 
-      int cardId = await db.insert(_table,{
-          _dateCardColumn: cardmodel.date
-        },
+      int cardId = await db.insert(_table,
+        cardmodel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort
       );
 
@@ -69,7 +69,6 @@ class DataBaseService {
           },
         );
       }
-      print("criado paew!");
     } catch (e) {
       rethrow;
     }

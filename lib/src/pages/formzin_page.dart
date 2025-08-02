@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
 import '../services/database_service.dart';
@@ -5,14 +7,64 @@ import '../widgets/background_widget.dart';
 import '../models/card_day.model.dart';
 import '../models/task_card_model.dart';
 
-class Formzin extends StatelessWidget {
+class Formzin extends StatefulWidget {
   const Formzin({super.key});
 
   @override
+  State<Formzin> createState() => _FormzinState();
+}
+
+class _FormzinState extends State<Formzin> {
+
+  Widget sucessFloatButCard = Container(
+    width: 200,
+    height: 30,
+    color: Colors.green,
+    child: Center(
+      child: Text(
+        "CARD SALVO",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18
+        ),
+      )
+    ),
+  );
+
+  Widget failFloatButCard = Container(
+    width: 200,
+    height: 30,
+    color: Colors.red,
+    child: Center(
+      child: Text(
+        "salve um cardzin ai",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18
+        ),
+      )
+    ),
+  );
+
+  @override
   Widget build(BuildContext context) {
+    print(FormzinPageController.instance.sucessCreateCard);
+
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      FormzinPageController.instance.resetsucessinCreateCard();
+    });
 
     return Scaffold(
       appBar: const AppBarWidget(),
+      floatingActionButton: AnimatedBuilder(
+        animation: FormzinPageController.instance,
+        builder: (context, _) {
+          return FormzinPageController.instance.sucessCreateCard
+            ? sucessFloatButCard
+            : failFloatButCard;
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: Stack(
         children: [
           BackgroundWidget(),
@@ -104,6 +156,8 @@ class _DateSelectionStateState extends State<DateSelectionState> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
+
+    FormzinPageController.instance.resetsucessinCreateCard();
 
     setState((){
       selectedDate = pickedDate;
@@ -478,23 +532,33 @@ class _ButzinState extends State<Butzin> {
                 child: GestureDetector(
                   onTap:() async {
                     // Pegando dados do card e criando o Map
-                    var dateSet = FormzinPageController.instance.dateCardSet;            
-                    String dateSetString = "${dateSet?.day}/${dateSet?.month}/${dateSet?.year}";
-                    var tasksCardModel = FormzinPageController.instance.taskCardModels;
+                    DateTime? dateSet = FormzinPageController.instance.dateCardSet;  
+                    if(dateSet != null){
+                      String dateSetString = "${dateSet?.day}/${dateSet?.month}/${dateSet?.year}";
+                      var tasksCardModel = FormzinPageController.instance.taskCardModels;
 
-                    var cardMap = CardDayModel(date: dateSetString,tasks: tasksCardModel);
+                      CardDayModel cardMap = CardDayModel(
+                        date: dateSetString,
+                        tasks: tasksCardModel,
+                        scheduledAt: dateSet
+                      );
 
-                    var db = DataBaseService();
+                      var db = DataBaseService();
 
-                    try {
+                      try {
 
-                      await db.insertCard(cardMap);
-                    } catch (e) {
-                      FormzinPageController.instance.clearTasksCardsModel();
-                      throw Exception("Error no front: $e");
-                    }
-
+                        await db.insertCard(cardMap);
+                        FormzinPageController.instance.clearTasksCardsModel();
+                        FormzinPageController.instance.sucessinCreateCard();
+                      } catch (e) {
+                        FormzinPageController.instance.clearTasksCardsModel();
+                        throw Exception("Error no front: $e");
+                      }
+                    } else {
+                      print("Data nula paewzao");
+                    }    
                     FormzinPageController.instance.clearTasksCardsModel();
+                    FormzinPageController.instance.temNadaAqui();
                   },
                   child: Text(
                     "SAVE CARD",
@@ -591,17 +655,31 @@ class FormzinPageController extends ChangeNotifier {
 
   String taskCount = '';
 
+  bool sucessCreateCard = false;
+
 
   Widget alertMessage = Text('');
-
   Widget jaTemEssaData = Text('Ja existe um card com esta data!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget temNadaAquiPat = Text('Selecione uma data e ao menos uma task', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
-  Widget cardSaved = Text('CARD SALVO COM SUCESSO!', style: TextStyle(color: Colors.green, fontSize: 20, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget tableDeleted = Text('Tabela Deletada!', style: TextStyle(backgroundColor: Colors.black, color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.white, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget temNemCardAi = Text('Tem nem Card aqui tiu!...', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget onetaskMinimum = Text('O Card deve ter ao menos uma Task!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget lotadoDeTask = Text('Limite Maximo de Tasks! 10/10', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
   Widget notEmptyTaskTextField = Text('Digite algo no campo da Task!', style: TextStyle(color: Colors.red, fontSize: 18, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1, 1))]), textAlign: TextAlign.center,);
+
+  
+
+  
+
+  void sucessinCreateCard(){
+    sucessCreateCard = true;
+    notifyListeners();
+  }
+  void resetsucessinCreateCard(){
+    sucessCreateCard = false;
+    notifyListeners();
+  }
+
 
   void resetAlertzin(){
     alertMessage = Text('');
@@ -696,10 +774,6 @@ class FormzinPageController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void savedcard(){
-    alertMessage = cardSaved;
-    notifyListeners();
-  }
 
   void updateMessage(){
     notifyListeners();

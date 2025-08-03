@@ -1,11 +1,12 @@
+import '../app.dart';
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
 import '../services/database_service.dart';
 import '../widgets/background_widget.dart';
 import '../models/card_day.model.dart';
 import '../models/task_card_model.dart';
+import '../pages/page2_page.dart';
 
 class Formzin extends StatefulWidget {
   const Formzin({super.key});
@@ -17,38 +18,42 @@ class Formzin extends StatefulWidget {
 class _FormzinState extends State<Formzin> {
 
   Widget sucessFloatButCard = Container(
-    width: 200,
+    width: 180,
     height: 30,
-    color: Colors.green,
+    decoration: BoxDecoration(
+      color: Colors.green,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          blurRadius: 4.0,
+          offset: Offset.zero,
+          spreadRadius: 1.0,
+          color: Colors.black
+        )
+      ]
+    ),
     child: Center(
       child: Text(
         "CARD SALVO",
         style: TextStyle(
           color: Colors.white,
-          fontSize: 18
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 1.0,
+              offset: Offset(1, 1)
+            )
+          ],
+          fontSize: 16
         ),
       )
     ),
   );
 
-  Widget failFloatButCard = Container(
-    width: 200,
-    height: 30,
-    color: Colors.red,
-    child: Center(
-      child: Text(
-        "salve um cardzin ai",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18
-        ),
-      )
-    ),
-  );
+  Widget failFloatButCard = SizedBox();
 
   @override
   Widget build(BuildContext context) {
-    print(FormzinPageController.instance.sucessCreateCard);
 
     WidgetsBinding.instance.addPostFrameCallback((_){
       FormzinPageController.instance.resetsucessinCreateCard();
@@ -330,7 +335,6 @@ class _TaskColumnState extends State<TasksColumn> {
             spacing: 20,
             children: [
               CircularProgressIndicator(
-                semanticsLabel: "Meu piru",
                 strokeAlign: 4,
                 strokeCap: StrokeCap.butt,
                 strokeWidth: 6,
@@ -342,6 +346,7 @@ class _TaskColumnState extends State<TasksColumn> {
                 "Data nao inserida, ou ja existente. Tente outra!",
                 style: TextStyle(
                   color: Colors.red,
+                  backgroundColor: const Color.fromARGB(80, 255, 255, 255),
                   fontSize: 18,
                   shadows: [
                     Shadow(
@@ -361,11 +366,11 @@ class _TaskColumnState extends State<TasksColumn> {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 153, 0, 255),
+        color: const Color.fromARGB(100, 76, 175, 79),
         borderRadius: BorderRadius.circular(10.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black,
+            color: const Color.fromARGB(100, 0, 0, 0),
             blurRadius: 6.0,
             spreadRadius: 1.0,
             offset: Offset(0, 0)
@@ -378,7 +383,7 @@ class _TaskColumnState extends State<TasksColumn> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.amber,
+              //color: Colors.amber,
               borderRadius: BorderRadiusDirectional.vertical(top:Radius.circular(10)),
             ),
             height: 69,
@@ -394,16 +399,28 @@ class _TaskColumnState extends State<TasksColumn> {
                     addTaksColumnController();
                   },
                   style: ElevatedButton.styleFrom(
-                    iconColor: Colors.black,
+                    iconColor: Colors.white,
+                    backgroundColor: Colors.red,
                     iconSize: 20,
                     shape: CircleBorder(),
-
+                    shadowColor: Colors.black,
+                    elevation: 4
                   ),
                   label: Icon(Icons.add),
                 ),
                 SizedBox(
                   width: 200,
                   child: TextFormField(
+                    style: TextStyle(
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(1, 1),
+                          blurRadius: 1.0
+                        )
+                      ]
+                    ),
                     maxLength: 20,
                     controller: taskInputController,
                     onChanged:(value) {
@@ -412,19 +429,33 @@ class _TaskColumnState extends State<TasksColumn> {
                     decoration: InputDecoration(
                       counterText: '',
                       labelText: "Task",
-                      labelStyle: TextStyle(color: Colors.black),
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.red,
+                            blurRadius: 1.0,
+                            offset: Offset(1, 1),
+                          )
+                        ]
+                      ),
                       hintText: "Insira uma task",
+                      hintStyle: TextStyle(
+                        color: const Color.fromARGB(180, 255, 255, 255),
+                        fontSize: 14,
+                        shadows: [],
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(26),
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: Colors.red,
                           width: 2
                         )
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(26),
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: Colors.red,
                           width: 2
                         )
                       ),
@@ -437,7 +468,14 @@ class _TaskColumnState extends State<TasksColumn> {
           Expanded(
             child: Container(
               alignment: Alignment.topCenter,
-              color: Colors.pink,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    width: 3.0,
+                    color: Colors.red
+                  )
+                )
+              ),
               width: 234,
               child: ListView(
                 controller: _taskScrollControll,
@@ -469,12 +507,11 @@ class _ButzinState extends State<Butzin> {
       listenable: FormzinPageController.instance,
       builder: (context, child) {
         return Container(
-          color: Colors.amber,
-          height: 90,
+          //color: Colors.amber,
+          height: 100,
           width: 130,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 0,
             children: [
               Container(
                 alignment: Alignment.center,
@@ -508,7 +545,7 @@ class _ButzinState extends State<Butzin> {
                     
                   },
                   child: Text(
-                    "SHOW TABLE",
+                    "SHOW CARDS",
                     style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
                   ),
                 ),
@@ -550,6 +587,7 @@ class _ButzinState extends State<Butzin> {
                         await db.insertCard(cardMap);
                         FormzinPageController.instance.clearTasksCardsModel();
                         FormzinPageController.instance.sucessinCreateCard();
+                        Page2Controller.instance.updateListeners();
                       } catch (e) {
                         FormzinPageController.instance.clearTasksCardsModel();
                         throw Exception("Error no front: $e");
@@ -586,9 +624,8 @@ class _ButzinState extends State<Butzin> {
                   onTap:() async {
                     final db = DataBaseService();
                     try{
-
-                      await db.droptable();
-                      return FormzinPageController.instance.tableDeletedson();
+                      await db.droptable();   
+                      return AppController.instance.deletedDataBase();
                     } catch (e){
                       return FormzinPageController.instance.temNemTable();
                     }
@@ -642,9 +679,10 @@ class _ButzinState extends State<Butzin> {
 
 class FormzinPageController extends ChangeNotifier {
 
+  //Estrutura singleton
   static final FormzinPageController instance = FormzinPageController._();
-
   FormzinPageController._();
+  //Estrutura singleton//
 
   String tasksDescs = '';
 
@@ -723,10 +761,10 @@ class FormzinPageController extends ChangeNotifier {
         child: Container(
           width: 80,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: const Color.fromARGB(100, 244, 67, 54),
             border: Border.all(
               color: Colors.white,
-              width: 3
+              width: 2.0
             ),
             borderRadius: BorderRadius.circular(20)
           ),
@@ -735,6 +773,13 @@ class FormzinPageController extends ChangeNotifier {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  blurRadius: 1.0,
+                  offset: Offset(1, 1)
+                )
+              ],
               fontSize: 18
             ),
           ),
@@ -756,11 +801,6 @@ class FormzinPageController extends ChangeNotifier {
 
   void temNemTable(){
     alertMessage = temNemCardAi;
-    notifyListeners();
-  }
-
-  void tableDeletedson(){
-    alertMessage = tableDeleted;
     notifyListeners();
   }
 

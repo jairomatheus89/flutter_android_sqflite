@@ -57,11 +57,6 @@ class _Page2PageState extends State<Page2Page> {
 }
 
 
-
-
-
-
-
 class CardsListContainer extends StatefulWidget {
   const CardsListContainer({super.key});
 
@@ -71,14 +66,13 @@ class CardsListContainer extends StatefulWidget {
 
 class _CardsListContainerState extends State<CardsListContainer> {
 
-  late bool isLoading = true;
+  bool existingCards = Page2Controller.instance.checkson;
 
   final TextStyle textStyle = TextStyle(
     fontSize: 100,
     fontWeight: FontWeight.normal,
   );
 
-  
   LinearGradient mygradson = LinearGradient(
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
@@ -94,42 +88,48 @@ class _CardsListContainerState extends State<CardsListContainer> {
   @override
   void initState(){
     super.initState();
-    isLoading = true;
+    existingCards = Page2Controller.instance.checkson;
+    Page2Controller.instance.updateListeners();
   }
-
-    // await Future.delayed(Duration(seconds: 2));
-
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      Page2Controller.instance.updateListeners();
+    });
 
-    return Container(
-      child: !isLoading 
-      ?SizedBox(
-        width: 222,
-        child: Center(
-          child: ShaderMask(
-            blendMode: BlendMode.srcIn,
-            shaderCallback: (bounds) {
-              return mygradson.createShader(
-                Rect.fromLTWH(0, 0, bounds.width, bounds.height)
-              );
-            },
-            child: Text(
-              "data",
-              style: textStyle
-            )
-          ),
-        ),
-      ) : SizedBox(
-        width: 100,
-        height: 100,
-        child: CircularProgressIndicator(
-          color: Colors.green,
-          backgroundColor: Colors.red,
-          strokeWidth: 10.0,
-        )
-      ),
-    );
+    if (!existingCards){
+      return Text("Procurando cards\n(Não há cards criados)", textAlign: TextAlign.center,);
+    }
+
+    return Text("TOMA AQUI TEUS CARDS PIRANHA!");
   }
+}
+
+class Page2Controller extends ChangeNotifier{
+
+  //Estrutura singleton
+  static final Page2Controller instance = Page2Controller._();
+  Page2Controller._();
+  //Estrutura singleton//
+
+  var db = DataBaseService();
+  bool checkson = false;
+
+  Future<bool> checkinExistCards() async {
+    try {
+      checkson = await db.existJustOneCard();
+    } catch (e){
+
+      throw ArgumentError("NEM TEM CARDS MEU FI!");
+    }
+    
+    return checkson;
+  }
+  
+  void updateListeners(){
+    checkinExistCards();
+    notifyListeners();
+  }
+
 }

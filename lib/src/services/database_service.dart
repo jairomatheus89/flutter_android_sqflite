@@ -79,14 +79,15 @@ class DataBaseService {
     var db = await database;
     
     try{
-      var cardinsert = await db.query(_table);
-      if (cardinsert.isEmpty){
-        throw Exception("errinho aqui");
-      }
-      for (var i in cardinsert) {
+      final List<Map<String, dynamic>> cardinsert = await db.query(
+        _table,
+        orderBy: 'scheduledAt ASC'
+      );
+
+      cardinsert.forEach((i){
         print(i);
-      }
-      return;
+      });
+      return cardinsert;
     } catch (e){
       throw Exception(e);
     }
@@ -121,6 +122,12 @@ class DataBaseService {
       whereArgs: [cardDate],
     );
 
+    return result.isNotEmpty;
+  }
+
+  Future<bool> existJustOneCard() async {
+    var db = await database;
+    final result = await db.query(_table);
     return result.isNotEmpty;
   }
 

@@ -21,6 +21,7 @@ class _Page2PageState extends State<Page2Page> {
     Page2Controller.instance.readingTasks();
 
     return Scaffold(
+      key: Key('_scaffoldKey'),
       appBar: AppBarWidget(),
       drawer: Drawer(
         child: Container(
@@ -117,6 +118,7 @@ class _CardsListContainerState extends State<CardsListContainer> {
   @override
   Widget build(BuildContext context) {
 
+
     if (!existingCards){
       return Text("Procurando cards\n(Não há cards criados)", textAlign: TextAlign.center,);
     }
@@ -161,31 +163,7 @@ class _CardsListContainerState extends State<CardsListContainer> {
             child: Container(
               color: Colors.pink,
               width: 250,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: Page2Controller.instance.listofCards.length,
-                itemBuilder:(context, index) {
-
-                  final item = Page2Controller.instance.listofCards[index];
-                  final taskItems = Page2Controller.instance.listofTasks;
-
-                  final relation = taskItems
-                    .where((e) => e['card_id'] == item['_id'])
-                    .toList();
-
-                  return ListTile(
-                    title: Text("${item['datecolumn']}"),
-                    subtitle: relation.isNotEmpty
-                      ? Text("${relation.toList().length} tasks")
-                      : Text("Tem nada aqui tiu")
-                    ,
-                    onTap:() {
-                      
-                      Scaffold.of(context).openDrawer();
-                    },
-                  );
-                },
-              ),
+              child: ListViewWidget()
             ),
           ),
         ),
@@ -193,6 +171,77 @@ class _CardsListContainerState extends State<CardsListContainer> {
     );
   }
 }
+
+
+class ListViewWidget extends StatefulWidget {
+  const ListViewWidget({super.key});
+
+  @override
+  State<ListViewWidget> createState() => _ListViewWidgetState();
+}
+
+class _ListViewWidgetState extends State<ListViewWidget> {
+
+  var db = DataBaseService();
+
+  List<Map<String, dynamic>> item = Page2Controller.instance.listofCards;
+
+  void initState(){
+    super.initState();
+    loadingTasksList();
+  }
+
+  void loadingTasksList() async {
+    final result = await db.showCards();
+    setState(() {
+      item = result;
+    });
+  }
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: Page2Controller.instance.listofCards.length,
+      itemBuilder:(context, index) {
+
+        final itemIndex = item[index];
+        final taskItems = Page2Controller.instance.listofTasks;
+
+        final relation = taskItems
+          .where((e) => e['card_id'] == itemIndex['_id'])
+          .toList();
+
+        return ListTile(
+          title: Text("${itemIndex['datecolumn']}"),
+          subtitle: item.isNotEmpty
+            ? Text("${relation.toList().length} tasks")
+            : Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                //color: const Color.fromARGB(255, 7, 204, 0),
+                constraints: BoxConstraints(maxWidth: 16),
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeAlign: 0.1,
+                  strokeWidth: 3,
+                ),
+              ),
+            )
+          ,
+          onTap:() {
+            
+            Scaffold.of(context).openDrawer();
+          },
+        );
+      },
+    );
+  }
+}
+
+
+
 
 class Page2Controller extends ChangeNotifier{
 

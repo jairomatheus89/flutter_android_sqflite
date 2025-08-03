@@ -14,6 +14,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget{
         ]
       ),
       child: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.green,
         elevation: 5.0,
         title: Text.rich(

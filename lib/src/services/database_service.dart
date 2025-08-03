@@ -54,14 +54,11 @@ class DataBaseService {
 
   Future<void> insertCard(CardDayModel cardmodel) async {
     var db = await database;
-
     try{
-
       int cardId = await db.insert(_table,
         cardmodel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort
       );
-
       for(var tasks in cardmodel.tasks){
         await db.insert('task_card', {
             'description': tasks.description,
@@ -75,18 +72,12 @@ class DataBaseService {
   }
 
   showCards() async {
-    
     var db = await database;
-    
     try{
       final List<Map<String, dynamic>> cardinsert = await db.query(
         _table,
         orderBy: 'scheduledAt ASC'
       );
-
-      cardinsert.forEach((i){
-        print(i);
-      });
       return cardinsert;
     } catch (e){
       throw Exception(e);
@@ -97,16 +88,16 @@ class DataBaseService {
     var db = await database;
 
     try {
-      var tasksHandle = await db.query('task_card');
+      final List<Map<String, dynamic>> tasksHandle = await db.query('task_card');
 
       if(tasksHandle.isEmpty){
         throw Exception("TA VAZIO SAPOHA DE TASKS LISTS");
       }
 
-      tasksHandle.forEach((i){
-        print(i);
-      });
-      return;
+      // tasksHandle.forEach((i){
+      //   print(i);
+      // });
+      return tasksHandle;
     } catch (e){
       throw Exception(e);
     }
@@ -121,7 +112,6 @@ class DataBaseService {
       where: '$_dateCardColumn = ?',
       whereArgs: [cardDate],
     );
-
     return result.isNotEmpty;
   }
 
@@ -142,7 +132,7 @@ class DataBaseService {
   droptable() async {
     try{
       await deleteDatabase(join(await getDatabasesPath(), _databaseName));
-      return print("Banco Deleted FDP!");
+      return print("db Deleted!");
     } catch (e){
       rethrow;
     }

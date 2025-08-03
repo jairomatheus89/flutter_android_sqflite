@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
+import '../pages/formzin_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/background_widget.dart';
+import '../services/database_service.dart';
+import '../app.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -17,6 +20,40 @@ class AboutPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBarWidget(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        alignment: Alignment.center,
+        width: 100,
+        height: 20,
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 3.0,
+              spreadRadius: 1.0,
+              offset: Offset(0,0)
+            )
+          ]
+        ),
+        child: GestureDetector(
+          onTap:() async {
+            final db = DataBaseService();
+            try{
+              await db.droptable();   
+              return AppController.instance.deletedDataBase();
+            } catch (e){
+              return FormzinPageController.instance.temNemTable();
+            }
+
+          },
+          child: Text(
+            "DELETE TABLE",
+            style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           BackgroundWidget(),

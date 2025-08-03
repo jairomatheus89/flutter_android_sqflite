@@ -508,48 +508,11 @@ class _ButzinState extends State<Butzin> {
       builder: (context, child) {
         return Container(
           //color: Colors.amber,
-          height: 100,
+          height: 70,
           width: 130,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                alignment: Alignment.center,
-                width: 100,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 3.0,
-                      spreadRadius: 1.0,
-                      offset: Offset(0,0)
-                    )
-                  ]
-                ),
-                child: GestureDetector(
-                  onTap:()async {
-                    
-                    final db = DataBaseService();
-                    try{
-                      
-                      await db.showCards();
-                      FormzinPageController.instance.dateCardSet = null;
-                      FormzinPageController.instance.resetAlertzin();
-                    } catch (e) {
-                      FormzinPageController.instance.dateCardSet = null;
-                      FormzinPageController.instance.temNemTable();
-                    }
-                    
-                  },
-                  child: Text(
-                    "SHOW CARDS",
-                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
-                  ),
-                ),
-              ),
               Container(
                 alignment: Alignment.center,
                 width: 100,
@@ -587,7 +550,9 @@ class _ButzinState extends State<Butzin> {
                         await db.insertCard(cardMap);
                         FormzinPageController.instance.clearTasksCardsModel();
                         FormzinPageController.instance.sucessinCreateCard();
+                        Page2Controller.instance.checkson = true;
                         Page2Controller.instance.updateListeners();
+                        Page2Controller.instance.readingTasks();
                       } catch (e) {
                         FormzinPageController.instance.clearTasksCardsModel();
                         throw Exception("Error no front: $e");
@@ -600,39 +565,6 @@ class _ButzinState extends State<Butzin> {
                   },
                   child: Text(
                     "SAVE CARD",
-                    style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                width: 100,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 3.0,
-                      spreadRadius: 1.0,
-                      offset: Offset(0,0)
-                    )
-                  ]
-                ),
-                child: GestureDetector(
-                  onTap:() async {
-                    final db = DataBaseService();
-                    try{
-                      await db.droptable();   
-                      return AppController.instance.deletedDataBase();
-                    } catch (e){
-                      return FormzinPageController.instance.temNemTable();
-                    }
-
-                  },
-                  child: Text(
-                    "DELETE TABLE",
                     style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
                   ),
                 ),

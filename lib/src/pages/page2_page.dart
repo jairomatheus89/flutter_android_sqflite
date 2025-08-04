@@ -4,6 +4,7 @@ import '../widgets/background_widget.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
 import '../services/database_service.dart';
+import '../app.dart';
 
 class Page2Page extends StatefulWidget {
   const Page2Page({super.key});
@@ -15,7 +16,6 @@ class Page2Page extends StatefulWidget {
 class Page2PageState extends State<Page2Page> {
   @override
   Widget build(BuildContext context) {
-
     Page2Controller.instance.readingCards();
     Page2Controller.instance.readingTasks();
 
@@ -83,7 +83,7 @@ class _DrawerPage2State extends State<DrawerPage2> {
 
     return Drawer(
       child: Container(
-        color: Colors.pink,
+        color: Colors.green,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +92,14 @@ class _DrawerPage2State extends State<DrawerPage2> {
               Text(
                 "TASKS",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.red,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black,
+                      blurRadius: 2,
+                      offset: Offset(1, 1)
+                    )
+                  ],
                   fontSize: 40
                 ),
               ),
@@ -100,28 +107,57 @@ class _DrawerPage2State extends State<DrawerPage2> {
                 "Card: ${cardzin['datecolumn']}",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 30
+                  fontSize: 30,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black,
+                      offset: Offset(1, 1)
+                    )
+                  ]
                 ),
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.lightBlue,
-                  borderRadius: BorderRadius.circular(10)
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 6.0,
+                      spreadRadius: 1.0,
+                      offset: Offset.zero
+                    )
+                  ]
                 ),
                 width: 234,
                 height: 321,
                 child: DrawerListBuilder(),
               ),
-              TextButton(
-                onPressed: (){
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  "Voltar",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 0.1, horizontal: 0.1),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      offset: Offset.zero,
+                      spreadRadius: 1.0,
+                      blurRadius: 6.0
+                    )
+                  ]
+                ),
+                child: TextButton(
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    "Voltar",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                    ),
                   ),
                 ),
               ),
@@ -141,6 +177,9 @@ class DrawerListBuilder extends StatefulWidget {
 }
 
 class _DrawerListBuilderState extends State<DrawerListBuilder> {
+
+  bool penisball = false;
+
   @override
   Widget build(BuildContext context) {
     int idCard = Page2Controller.instance.idCardson;
@@ -154,11 +193,62 @@ class _DrawerListBuilderState extends State<DrawerListBuilder> {
       .toList();
 
     return ListView.builder(
+      padding: EdgeInsetsGeometry.all(8.0),
       itemCount: relation.length,
       itemBuilder: (context, index) {
+
         final item = relation[index];
-        return ListTile(
-          title: Text("${item['description']}"),
+        return Container(
+          alignment: Alignment.centerLeft,
+          margin: EdgeInsetsGeometry.fromLTRB(0, 0, 0, 8),
+          decoration: BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Colors.white,
+              width: 3.0
+            )
+          ),
+          child: ListTile(
+            titleAlignment: ListTileTitleAlignment.center,
+            contentPadding: EdgeInsets.fromLTRB(6,0,4,0),
+            horizontalTitleGap: 0,
+            title: Container(
+              //color: Colors.blue,
+              child: Text(
+                "${item['description']}",
+                style: TextStyle(
+                  fontSize: 20,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black,
+                      blurRadius: 1.0,
+                      offset: Offset(1, 1)
+                    )
+                  ],
+                  color: Colors.white
+                ),
+              ),
+            ),
+            trailing: Container(
+              width: 30,
+              height: 20,
+              //color: Colors.pink,
+              child: Transform.scale(
+                scale: 0.6,
+                child: Switch(
+                  activeColor: Colors.red,
+                  value: penisball,
+                  onChanged: (bool value){
+                    print("Agora ta: ${penisball ? 'desligado' : 'ligado'}");
+                    setState(() {
+                      penisball = value;
+                    });
+                  }
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
@@ -173,8 +263,6 @@ class CardsListContainer extends StatefulWidget {
 }
 
 class _CardsListContainerState extends State<CardsListContainer> {
-
-  bool existingCards = Page2Controller.instance.checkson;
 
   final db = DataBaseService();
 
@@ -202,6 +290,7 @@ class _CardsListContainerState extends State<CardsListContainer> {
   @override
   Widget build(BuildContext context) {
 
+    bool existingCards = Page2Controller.instance.checkson;
 
     if (!existingCards){
       return Text("Procurando cards\n(Não há cards criados)", textAlign: TextAlign.center,);
@@ -281,6 +370,7 @@ class _ListViewWidgetState extends State<ListViewWidget> {
 
   @override
   Widget build(BuildContext context) {
+
     return ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: Page2Controller.instance.listofCards.length,
@@ -339,6 +429,21 @@ class _ListViewWidgetState extends State<ListViewWidget> {
                 ),
               )
             ,
+            trailing: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white
+              ),
+              width: 30,
+              height: 30,
+              child: GestureDetector(
+                onTap: () => _deleteCardSure(context, itemIndex),
+                child: Icon(
+                  Icons.delete,
+                  color: const Color.fromARGB(255, 255, 0, 0),
+                ),
+              ),
+            ),
             onTap:() {
               int idCard = itemIndex['_id'];
               Page2Controller.instance.idCardson = idCard;
@@ -349,6 +454,57 @@ class _ListViewWidgetState extends State<ListViewWidget> {
       },
     );
   }
+}
+
+
+Future<void> _deleteCardSure(BuildContext context, Map<String, dynamic>itemIndex){
+  var db = DataBaseService();
+
+  return showDialog(
+    context: context,
+    builder: (context){
+      return AlertDialog(
+        title: Text("Deletar Card", style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 255, 0, 0))),
+        content: Text("Voce tem certeza que deseja excluir este card?"),
+
+        actions: [
+          TextButton(
+            onPressed: (){
+              Navigator.of(context).pop();
+              print("CANCELASTES o deletinho do card ${itemIndex['_id']}");
+            },
+            child: Text("Cancelar")
+          ),
+          TextButton(
+            onPressed: () async{
+              try{
+                await db.deleteCardFromId(itemIndex['_id']);
+                await Page2Controller.instance.checkinExistCards();
+                AppController.instance.cardDeleted();
+
+              }catch (e){
+                print("nao ta deletano, ta errado algo...");
+              }
+              
+            },
+            child: Container(
+              padding: EdgeInsetsGeometry.all(4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: const Color.fromARGB(255, 255, 0, 0)
+              ),
+              child: Text(
+                "DELETAR",
+                style: TextStyle(
+                  color: Colors.white,          
+                )
+              ),
+            )
+          )
+        ],
+      );
+    }
+  );
 }
 
 

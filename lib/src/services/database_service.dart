@@ -21,7 +21,11 @@ class DataBaseService {
       Database db = await openDatabase(
         path,
         version: _databaseVersion,
-        onCreate: (db, version) {
+        onOpen: (db) async {
+          await db.execute('PRAGMA foreign_keys = ON');
+        },
+        onCreate: (db, version) async {
+          await db.execute('PRAGMA foreign_keys = ON');
 
           db.execute('''
             CREATE TABLE IF NOT EXISTS $_table (
@@ -71,6 +75,7 @@ class DataBaseService {
     }
   }
 
+
   showCards() async {
     var db = await database;
     try{
@@ -78,9 +83,9 @@ class DataBaseService {
         _table,
         orderBy: 'scheduledAt ASC'
       );
-      // cardinsert.forEach((i){
-      //   print(i);
-      // });
+      cardinsert.forEach((i){
+        print(i);
+      });
       return cardinsert;
     } catch (e){
       throw Exception(e);
@@ -97,9 +102,9 @@ class DataBaseService {
         throw Exception("TA VAZIO SAPOHA DE TASKS LISTS");
       }
 
-      // tasksHandle.forEach((i){
-      //   print(i);
-      // });
+      tasksHandle.forEach((i){
+        print(i);
+      });
       return tasksHandle;
     } catch (e){
       throw Exception(e);
@@ -127,9 +132,15 @@ class DataBaseService {
   deleteCardFromId(cardId) async {
     var db = await database;
 
-    db.execute('''
-      DELETE FROM $_table WHERE $_idCardColumn = $cardId;
-    ''');
+    try{
+      db.execute('''
+        DELETE FROM $_table WHERE $_idCardColumn = $cardId;
+      ''');
+      print("card deletado!");
+    } catch (e){
+      throw Exception(e);
+    }
+    
   }
 
   droptable() async {

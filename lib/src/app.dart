@@ -94,6 +94,11 @@ class AppController extends ChangeNotifier{
 
   bool existingDataBase = true;
 
+  void cardDeleted(){
+    navigatorKey.currentState?.pushReplacementNamed('/page2');
+    notifyListeners();
+  }
+
   void deletedDataBase(){
     existingDataBase = false;
     if (!existingDataBase){

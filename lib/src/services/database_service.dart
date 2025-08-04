@@ -78,6 +78,9 @@ class DataBaseService {
         _table,
         orderBy: 'scheduledAt ASC'
       );
+      // cardinsert.forEach((i){
+      //   print(i);
+      // });
       return cardinsert;
     } catch (e){
       throw Exception(e);

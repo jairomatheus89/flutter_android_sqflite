@@ -9,11 +9,10 @@ class Page2Page extends StatefulWidget {
   const Page2Page({super.key});
 
   @override
-  State<Page2Page> createState() => _Page2PageState();
+  State<Page2Page> createState() => Page2PageState();
 }
 
-class _Page2PageState extends State<Page2Page> {
-
+class Page2PageState extends State<Page2Page> {
   @override
   Widget build(BuildContext context) {
 
@@ -21,26 +20,8 @@ class _Page2PageState extends State<Page2Page> {
     Page2Controller.instance.readingTasks();
 
     return Scaffold(
-      key: Key('_scaffoldKey'),
       appBar: AppBarWidget(),
-      drawer: Drawer(
-        child: Container(
-          color: Colors.pink,
-          child: Center(
-            child: TextButton(
-              onPressed: (){
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "VORTA PA TRAIS",
-                style: TextStyle(
-                  color: Colors.white
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+      drawer: DrawerPage2(),
       body: Stack(
         children: [
           BackgroundWidget(),
@@ -80,6 +61,106 @@ class _Page2PageState extends State<Page2Page> {
   }
 }
 
+
+class DrawerPage2 extends StatefulWidget {
+  const DrawerPage2({super.key});
+
+  @override
+  State<DrawerPage2> createState() {
+    return _DrawerPage2State();
+  }
+}
+
+class _DrawerPage2State extends State<DrawerPage2> {
+  @override
+  Widget build(BuildContext context) {
+
+    int idCard = Page2Controller.instance.idCardson;
+
+    List<Map<String,dynamic>> cardList = Page2Controller.instance.listofCards;
+
+    var cardzin = cardList.where((e) => e['_id'] == idCard).first;
+
+    return Drawer(
+      child: Container(
+        color: Colors.pink,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 20,
+            children: [
+              Text(
+                "TASKS",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 40
+                ),
+              ),
+              Text(
+                "Card: ${cardzin['datecolumn']}",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30
+                ),
+              ),
+              Container(
+                color: Colors.lightBlue,
+                width: 234,
+                height: 321,
+                child: DrawerListBuilder(),
+              ),
+              TextButton(
+                onPressed: (){
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "VORTA PA TRAIS",
+                  style: TextStyle(
+                    color: Colors.white
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DrawerListBuilder extends StatefulWidget {
+  const DrawerListBuilder({super.key});
+
+  @override
+  State<DrawerListBuilder> createState() => _DrawerListBuilderState();
+}
+
+class _DrawerListBuilderState extends State<DrawerListBuilder> {
+  @override
+  Widget build(BuildContext context) {
+    int idCard = Page2Controller.instance.idCardson;
+    List<Map<String,dynamic>> cardList = Page2Controller.instance.listofCards;
+    var cardzin = cardList.where((e) => e['_id'] == idCard).first;
+
+    final taskList = Page2Controller.instance.listofTasks;
+
+    final relation = taskList
+      .where((e) => e['card_id'] == cardzin['_id'])
+      .toList();
+
+    print(relation);
+
+    return ListView.builder(
+      itemCount: relation.length,
+      itemBuilder: (context, index) {
+        final item = relation[index];
+        return ListTile(
+          title: Text("${item['description']}"),
+        );
+      },
+    );
+  }
+}
 
 class CardsListContainer extends StatefulWidget {
   const CardsListContainer({super.key});
@@ -197,7 +278,6 @@ class _ListViewWidgetState extends State<ListViewWidget> {
       item = result;
     });
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +311,8 @@ class _ListViewWidgetState extends State<ListViewWidget> {
             )
           ,
           onTap:() {
-            
+            int idCard = itemIndex['_id'];
+            Page2Controller.instance.idCardson = idCard;
             Scaffold.of(context).openDrawer();
           },
         );
@@ -239,8 +320,6 @@ class _ListViewWidgetState extends State<ListViewWidget> {
     );
   }
 }
-
-
 
 
 class Page2Controller extends ChangeNotifier{
@@ -254,6 +333,11 @@ class Page2Controller extends ChangeNotifier{
   bool checkson = false;
   List<Map<String, dynamic>> listofCards = [];
   List<Map<String, dynamic>> listofTasks = [];
+  int idCardson = 0;
+
+  void updateIdCard(){
+    notifyListeners();
+  }
 
   Future<bool> checkinExistCards() async {
     try {
@@ -274,9 +358,7 @@ class Page2Controller extends ChangeNotifier{
 
   void readingTasks() async {
     listofTasks = await db.showTasks();
-    if(listofTasks.isNotEmpty){
-      print("TA CHEGANDO AS TASKS BROW");
-    } else {
+    if(listofTasks.isEmpty){
       print("TA FODINHA MEMO VIU!...");
     }
     notifyListeners();

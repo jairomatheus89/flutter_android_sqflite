@@ -23,8 +23,8 @@ class AboutPage extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
         alignment: Alignment.center,
-        width: 100,
-        height: 20,
+        width: 180,
+        height: 25,
         decoration: BoxDecoration(
           color: Colors.red,
           borderRadius: BorderRadius.circular(20),
@@ -38,18 +38,9 @@ class AboutPage extends StatelessWidget {
           ]
         ),
         child: GestureDetector(
-          onTap:() async {
-            final db = DataBaseService();
-            try{
-              await db.droptable();   
-              return AppController.instance.deletedDataBase();
-            } catch (e){
-              return FormzinPageController.instance.temNemTable();
-            }
-
-          },
+          onTap:() => _deleteDbSure(context),
           child: Text(
-            "DELETE TABLE",
+            "Deletar Banco de Dados",
             style: TextStyle(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 1.0, offset: Offset(1,1))]),
           ),
         ),
@@ -59,6 +50,7 @@ class AboutPage extends StatelessWidget {
           BackgroundWidget(),
           Center(
             child: Container(
+              margin: EdgeInsetsGeometry.only(bottom: 40),
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
@@ -179,4 +171,53 @@ class AboutPage extends StatelessWidget {
       )
     );
   }
+}
+
+Future<void> _deleteDbSure(BuildContext context){
+  return showDialog(
+    context: context,
+    builder:(context) {
+      return AlertDialog(
+        title: Text("DELETAR BANCO DE DADOS", textAlign: TextAlign.center, style: TextStyle(color: Colors.red, fontSize: 18)),
+        content: Text("Após o banco de dados for deletado, o aplicativo deverá ser reiniciado. Tem certeza que deseja deleta-lo?", textAlign: TextAlign.center,),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        
+        actions: [
+          TextButton(
+            onPressed: (){
+              Navigator.of(context).pop();
+              print("CANCELASTES!");
+            },
+            child: Text("Cancelar")
+          ),
+          TextButton(
+            onPressed: () async {
+              final db = DataBaseService();
+              try{
+                await db.droptable();   
+                return AppController.instance.deletedDataBase();
+              } catch (e){
+                return FormzinPageController.instance.temNemTable();
+              }
+              // Navigator.of(context).pop();
+              // print("DELETASTES!");
+            },
+            child: Container(
+              padding: EdgeInsetsGeometry.all(4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: const Color.fromARGB(255, 255, 0, 0)
+              ),
+              child: Text(
+                "DELETAR",
+                style: TextStyle(
+                  color: Colors.white,          
+                )
+              ),
+            )
+          )
+        ],
+      );
+    },
+  );
 }

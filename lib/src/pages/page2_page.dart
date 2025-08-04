@@ -104,7 +104,10 @@ class _DrawerPage2State extends State<DrawerPage2> {
                 ),
               ),
               Container(
-                color: Colors.lightBlue,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue,
+                  borderRadius: BorderRadius.circular(10)
+                ),
                 width: 234,
                 height: 321,
                 child: DrawerListBuilder(),
@@ -114,9 +117,11 @@ class _DrawerPage2State extends State<DrawerPage2> {
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  "VORTA PA TRAIS",
+                  "Voltar",
                   style: TextStyle(
-                    color: Colors.white
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20
                   ),
                 ),
               ),
@@ -147,8 +152,6 @@ class _DrawerListBuilderState extends State<DrawerListBuilder> {
     final relation = taskList
       .where((e) => e['card_id'] == cardzin['_id'])
       .toList();
-
-    print(relation);
 
     return ListView.builder(
       itemCount: relation.length,
@@ -206,45 +209,42 @@ class _CardsListContainerState extends State<CardsListContainer> {
 
     return Column(
       children: [
-        Container(
-          alignment: Alignment.center,
-          width: 220,
-          margin: EdgeInsetsGeometry.only(bottom: 10),
-          decoration: BoxDecoration(
+        Text(
+          "Lista de Cards",
+          style: TextStyle(
+            fontSize: 28,
             color: Colors.green,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
+            shadows: [
+              Shadow(
                 color: Colors.black,
-                blurRadius: 4.0,
-                offset: Offset.zero,
-                spreadRadius: 1.0
+                blurRadius: 1.0,
+                offset: Offset(1, 1)
               )
             ]
-          ),
-          child: Text(
-            "Selecione o Card",
-            style: TextStyle(
-              fontSize: 26,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black,
-                  blurRadius: 1.0,
-                  offset: Offset(1, 1)
-                )
-              ]
-            ),
           ),
         ),
         Expanded(
           child: Container(
             alignment: Alignment.center,
-            color: Colors.amber,
-            child: Container(
-              color: Colors.pink,
-              width: 250,
-              child: ListViewWidget()
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(100, 76, 175, 79),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(100, 0, 0, 0),
+                  blurRadius: 6.0,
+                  spreadRadius: 1.0,
+                  offset: Offset(0, 0)
+                )
+              ],
+              borderRadius: BorderRadius.circular(10)
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                // color: const Color.fromARGB(193, 233, 30, 98),
+                width: 250,
+                child: ListViewWidget()
+              ),
             ),
           ),
         ),
@@ -293,28 +293,58 @@ class _ListViewWidgetState extends State<ListViewWidget> {
           .where((e) => e['card_id'] == itemIndex['_id'])
           .toList();
 
-        return ListTile(
-          title: Text("${itemIndex['datecolumn']}"),
-          subtitle: item.isNotEmpty
-            ? Text("${relation.toList().length} tasks")
-            : Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                //color: const Color.fromARGB(255, 7, 204, 0),
-                constraints: BoxConstraints(maxWidth: 16),
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeAlign: 0.1,
-                  strokeWidth: 3,
-                ),
-              ),
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            color: const Color.fromARGB(100, 244, 67, 54),
+            border: Border.all(
+              color: Colors.white,
+              width: 3
             )
-          ,
-          onTap:() {
-            int idCard = itemIndex['_id'];
-            Page2Controller.instance.idCardson = idCard;
-            Scaffold.of(context).openDrawer();
-          },
+          ),
+          padding: EdgeInsets.only(left: 10),
+          margin: EdgeInsetsGeometry.fromLTRB(0, 10, 0, 0),
+          child: ListTile(
+            title: Text(
+              "${itemIndex['datecolumn']}",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    offset: Offset(1, 1)
+                  )
+                ]
+              ),
+            ),
+            subtitle: item.isNotEmpty
+              ? Text(
+                "${relation.toList().length} tasks",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16
+                ),
+              )
+              : Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  //color: const Color.fromARGB(255, 7, 204, 0),
+                  constraints: BoxConstraints(maxWidth: 16),
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeAlign: 0.1,
+                    strokeWidth: 3,
+                  ),
+                ),
+              )
+            ,
+            onTap:() {
+              int idCard = itemIndex['_id'];
+              Page2Controller.instance.idCardson = idCard;
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         );
       },
     );

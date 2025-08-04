@@ -1,5 +1,3 @@
-import 'package:flutter/gestures.dart';
-
 import '../widgets/background_widget.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar_widget.dart';
@@ -16,6 +14,7 @@ class Page2Page extends StatefulWidget {
 class Page2PageState extends State<Page2Page> {
   @override
   Widget build(BuildContext context) {
+    print("penis");
     Page2Controller.instance.readingCards();
     Page2Controller.instance.readingTasks();
 
@@ -74,7 +73,7 @@ class DrawerPage2 extends StatefulWidget {
 class _DrawerPage2State extends State<DrawerPage2> {
   @override
   Widget build(BuildContext context) {
-
+    print("penisDrawer");
     int idCard = Page2Controller.instance.idCardson;
 
     List<Map<String,dynamic>> cardList = Page2Controller.instance.listofCards;
@@ -178,10 +177,12 @@ class DrawerListBuilder extends StatefulWidget {
 
 class _DrawerListBuilderState extends State<DrawerListBuilder> {
 
-  bool penisball = false;
+  var db = DataBaseService();
 
   @override
   Widget build(BuildContext context) {
+    print("penisDrawerListbuild");
+
     int idCard = Page2Controller.instance.idCardson;
     List<Map<String,dynamic>> cardList = Page2Controller.instance.listofCards;
     var cardzin = cardList.where((e) => e['_id'] == idCard).first;
@@ -192,12 +193,14 @@ class _DrawerListBuilderState extends State<DrawerListBuilder> {
       .where((e) => e['card_id'] == cardzin['_id'])
       .toList();
 
+
     return ListView.builder(
       padding: EdgeInsetsGeometry.all(8.0),
       itemCount: relation.length,
       itemBuilder: (context, index) {
 
         final item = relation[index];
+
         return Container(
           alignment: Alignment.centerLeft,
           margin: EdgeInsetsGeometry.fromLTRB(0, 0, 0, 8),
@@ -238,11 +241,15 @@ class _DrawerListBuilderState extends State<DrawerListBuilder> {
                 scale: 0.6,
                 child: Switch(
                   activeColor: Colors.red,
-                  value: penisball,
-                  onChanged: (bool value){
-                    print("Agora ta: ${penisball ? 'desligado' : 'ligado'}");
+                  value: item['id_done'] == 1,
+                  onChanged: (e) async {
+                    try{
+                      await db.updateTaskForDone(item['_id']);
+                    } catch (e){
+                      throw Exception("Ta aqui esta merda!: $e");
+                    }
                     setState(() {
-                      penisball = value;
+                      Navigator.pushReplacementNamed(context, '/page2');
                     });
                   }
                 ),
@@ -379,8 +386,14 @@ class _ListViewWidgetState extends State<ListViewWidget> {
         final itemIndex = item[index];
         final taskItems = Page2Controller.instance.listofTasks;
 
+
+
         final relation = taskItems
           .where((e) => e['card_id'] == itemIndex['_id'])
+          .toList();
+
+        final doneRelation = relation
+          .where((e) => e['id_done'] == 1)
           .toList();
 
         return Container(
@@ -410,10 +423,10 @@ class _ListViewWidgetState extends State<ListViewWidget> {
             ),
             subtitle: item.isNotEmpty
               ? Text(
-                "${relation.toList().length} tasks",
+                "${doneRelation.length}/${relation.toList().length} tasks cumpridas",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16
+                  fontSize: 12
                 ),
               )
               : Align(
@@ -523,6 +536,10 @@ class Page2Controller extends ChangeNotifier{
 
   void updateIdCard(){
     notifyListeners();
+  }
+
+  void updateTaskState(){
+    
   }
 
   Future<bool> checkinExistCards() async {

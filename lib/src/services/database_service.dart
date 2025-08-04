@@ -75,6 +75,19 @@ class DataBaseService {
     }
   }
 
+  updateTaskForDone(taskId) async {
+    var db = await database;
+
+    try{
+      await db.rawUpdate(
+        'UPDATE task_card SET id_done = CASE id_done WHEN 1 THEN 0 ELSE 1 END WHERE _id = ?',
+        [taskId]
+      );
+    } catch (e){
+      throw Exception(e);
+    }
+  }
+
 
   showCards() async {
     var db = await database;

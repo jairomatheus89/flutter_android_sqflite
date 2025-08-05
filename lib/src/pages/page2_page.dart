@@ -14,7 +14,6 @@ class Page2Page extends StatefulWidget {
 class Page2PageState extends State<Page2Page> {
   @override
   Widget build(BuildContext context) {
-    print("penis");
     Page2Controller.instance.readingCards();
     Page2Controller.instance.readingTasks();
 
@@ -300,7 +299,51 @@ class _CardsListContainerState extends State<CardsListContainer> {
     bool existingCards = Page2Controller.instance.checkson;
 
     if (!existingCards){
-      return Text("Procurando cards\n(Não há cards criados)", textAlign: TextAlign.center,);
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 60,
+        children: [
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: const Color.fromARGB(100, 76, 175, 79),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(100, 0, 0, 0),
+                  blurRadius: 6.0,
+                  spreadRadius: 1,
+                  offset: Offset.zero
+                )
+              ]
+            ),
+            width: 160,
+            height: 160,
+            child: CircularProgressIndicator(
+              strokeAlign: 1,
+              strokeWidth: 10,
+              backgroundColor: Colors.red,
+              color: Colors.green,
+            ),
+          ),
+          Text(
+            "Procurando cards\n(Não há cards criados)",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 22,
+              backgroundColor: const Color.fromARGB(134, 255, 255, 255),
+              color: Colors.red,
+              shadows: [
+                Shadow(
+                  color: Colors.black,
+                  blurRadius: 1.0,
+                  offset: Offset(1, 1)
+                )
+              ]
+            ),
+          ),
+        ],
+      );
     }
 
     return Column(
